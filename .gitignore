@@ -1,0 +1,5 @@
+.idea/
+pipeline.conf
+__pycache__/
+downloads/
+logs/
