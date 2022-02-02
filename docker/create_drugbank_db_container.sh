@@ -2,12 +2,14 @@
 
 DRUGBANK_CSV_PATH=$1
 DB_PASSWORD=$2
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+DOCKER_CONTEXT="${SCRIPT_DIR}"
 
 # Build image first if it doesn't exist yet
 drugbank_image=$( docker images -q drugbank/postgres:latest )
 if [[ -z "${drugbank_image}" ]]; then
   echo "Building Docker image..."
-  docker image build . -t drugbank/postgres
+  docker image build "$DOCKER_CONTEXT" -t drugbank/postgres
 else
   echo "Removing currrent Docker container..."
   docker rm -f drugbank-postgres
