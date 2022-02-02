@@ -16,6 +16,9 @@ cfg_parser.read('pipeline.conf')
 
 
 def fetch_drugbank_latest_downloads():
+    """
+    Fetch the most recent available downloads by format after the last update (see pipeline.conf)
+    """
     data = BytesIO()
 
     pycurl = pycurl_lib.Curl()
@@ -33,26 +36,34 @@ def fetch_drugbank_latest_downloads():
     json_last_update = datetime.strptime(cfg_parser.get('drugbank_last_update', 'json_last_update'), date_format)
     csv_last_update = datetime.strptime(cfg_parser.get('drugbank_last_update', 'csv_last_update'), date_format)
 
-    latest_updates = {}
+    added_formats = []
+    latest_updates = []
     for download in downloads_data:
         download_date = datetime.strptime(download['created_at'], date_format)
-        if (download['format'] == 'JSON') and ('json' not in latest_updates):
-            if download_date > json_last_update:
-                latest_updates['json'] = download
-        elif (download['format'] == 'CSV') and ('csv' not in latest_updates):
-            if download_date > csv_last_update:
-                latest_updates['csv'] = download
+        add_download_entry = False
+        if (download['format'] == 'JSON') and ('JSON' not in added_formats):
+            add_download_entry = download_date > json_last_update
+        elif (download['format'] == 'CSV') and ('CSV' not in added_formats):
+            add_download_entry = download_date > csv_last_update
+
+        if add_download_entry:
+            update_to_apply = {'type': download['format'],
+                               'fetch_date': datetime.now().strftime(date_format),
+                               'download_info': download}
+            latest_updates.append(update_to_apply)
+            added_formats.append(download['format'])
 
     return latest_updates
 
 
 def download_latest_updates(latest_updates):
+    """
+    Download latest available zip downloads of the DrugBank for supported formats.
+    """
     for update_info in latest_updates:
         update_format = None
-        if latest_updates['json']:
-            update_format = 'JSON'
-        elif latest_updates['csv']:
-            update_format = 'CSV'
+        if update_info['download_info']['format'] in ('JSON', 'CSV'):
+            update_format = update_info['download_info']['format']
 
         if update_format:
             if not os.path.exists('downloads'):
@@ -62,7 +73,7 @@ def download_latest_updates(latest_updates):
             with open(file_name, 'wb') as f:
                 print("Downloading file " + file_name + ' .....')
                 pycurl = pycurl_lib.Curl()
-                pycurl.setopt(pycurl.URL, latest_updates[update_info]['url'])
+                pycurl.setopt(pycurl.URL, update_info['download_info']['url'])
                 pycurl.setopt(pycurl.USERPWD, '%s:%s' % (cfg_parser.get('drugbank_credentials', 'user'),
                                                          cfg_parser.get('drugbank_credentials', 'password')))
                 pycurl.setopt(pycurl.FOLLOWLOCATION, True)
@@ -70,7 +81,7 @@ def download_latest_updates(latest_updates):
                 pycurl.perform()
                 pycurl.close()
                 print("File downloaded.")
-            if update_info['content_type'] == 'application/zip':
+            if update_info['download_info']['content_type'] == 'application/zip':
                 unzip_downloaded_file(file_name, update_format)
 
 
@@ -85,3 +96,4 @@ def unzip_downloaded_file(zip_update_file, update_format):
             print('Zip file extracted.')
     else:
         print("Path doesn't exist or not valid zip file '" + zip_update_file + "'")
+        sys.exit("[Error] DrugBank extraction couldn't be completed successfully.")
