@@ -17,8 +17,8 @@ fi
 
 # DB Service will be available once the drugbank data has been loaded from the CSV directory
 echo "Running new Docker container..."
-docker run --name drugbank-postgres \
+docker run --name drugbank-postgres --restart=always \
   --mount type=bind,source="$DRUGBANK_CSV_PATH",target=/opt/drugbank-data \
-  -p 5432:5432 \
+  -p 7766:5432 \
   -e POSTGRES_PASSWORD="$DB_PASSWORD" -e POSTGRES_DB=drugbank \
   -d drugbank/postgres
