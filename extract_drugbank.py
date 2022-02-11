@@ -60,10 +60,6 @@ def download_latest_updates(latest_updates):
     """
     Download latest available zip downloads of the DrugBank for supported formats.
     """
-    # TODO Use download id instead of datestamp as file name
-    # TODO Validate if the zip file already exists in the downloads directory,
-    #  if it does, don't download the zip file again
-    # TODO Remove older zip files, leave latest 3 (configurable)
     for update_info in latest_updates:
         update_format = None
         if update_info['download_info']['format'] in ('JSON', 'CSV'):
@@ -100,6 +96,7 @@ def unzip_downloaded_file(zip_update_file, update_format):
             print('Extracting file ' + zip_update_file + ' to ' + drugbank_path)
             zip_ref.extractall(drugbank_path)
             print('Zip file extracted.')
+        os.remove(zip_update_file)
     else:
         print("Path doesn't exist or not valid zip file '" + zip_update_file + "'")
         sys.exit("[Error] DrugBank extraction couldn't be completed successfully.")

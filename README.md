@@ -9,3 +9,4 @@
   * `su postgres`
   * `psql`
   * `\c drugbank`
+* A log file with the updates applied by the pipeline is stored under `./logs/latest_updates.json`

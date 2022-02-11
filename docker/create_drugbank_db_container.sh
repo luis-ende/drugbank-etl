@@ -22,3 +22,6 @@ docker run --name drugbank-postgres --restart=always \
   -p 7766:5432 \
   -e POSTGRES_PASSWORD="$DB_PASSWORD" -e POSTGRES_DB=drugbank \
   -d drugbank/postgres
+
+# Remove all volumes not used by at least one container. -f without prompt
+docker volume prune -f
