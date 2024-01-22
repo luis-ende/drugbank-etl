@@ -4,7 +4,7 @@ from log_pipeline_info import log_updates_info, update_config_info
 from datetime import datetime
 
 
-def build_supernus_drugbank():
+def build_etl_drugbank():
     print('Fetching latest downloads info ..........................')
     latest_updates = fetch_drugbank_latest_downloads()
     if len(latest_updates) > 0:
@@ -20,4 +20,4 @@ def build_supernus_drugbank():
 
 
 if __name__ == '__main__':
-    build_supernus_drugbank()
+    build_etl_drugbank()

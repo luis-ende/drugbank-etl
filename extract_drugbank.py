@@ -86,10 +86,10 @@ def download_latest_updates(latest_updates):
 
 
 def unzip_downloaded_file(zip_update_file, update_format):
-    drugbank_path = cfg_parser.get('supernus_drugbank_paths', update_format)
+    drugbank_path = cfg_parser.get('etl_drugbank_paths', update_format)
     if not os.path.exists(drugbank_path):
         sys.exit("DrugBank directory doesn't exist: " + drugbank_path +
-                 ". See [supernus_drugbank_paths] section in config file.")
+                 ". See [etl_drugbank_paths] section in config file.")
 
     if os.path.exists(zip_update_file) and zipfile.is_zipfile(zip_update_file):
         with zipfile.ZipFile(zip_update_file, 'r') as zip_ref:

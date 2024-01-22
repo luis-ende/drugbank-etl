@@ -1,18 +1,18 @@
 [drugbank_credentials]
-user=SUPERNUS
+user=tester
 password=pass
 
 [drugbank_last_update]
 json_last_update=2022-01-27T03:26:21.000Z
 csv_last_update=2022-01-24T18:45:54.000Z
 
-[supernus_drugbank_paths]
-JSON=/opt/data/sas_supernus_drugbank/drugbank_json
-CSV=/opt/data/sas_supernus_drugbank/drugbank_csv
+[etl_drugbank_paths]
+JSON=/opt/data/demo_etl_drugbank/drugbank_json
+CSV=/opt/data/demo_etl_drugbank/drugbank_csv
 
 [pipeline_log_paths]
 latest_updates_file=./logs/latest_updates.json
 
-[supernus_drugbank_postgresql]
+[etl_drugbank_postgresql]
 db_user=postgres
 db_password=pass
